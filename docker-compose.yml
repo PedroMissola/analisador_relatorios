@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  
+  api:
+    build: ./api                # Serviço da API
+    ports:
+      - "8000:8000"             # Mapeia a porta do host para o contêiner
+    volumes:
+      - ./api:/app              # Sincroniza o código-fonte para desenvolvimento
+    depends_on:
+      - redis                   # Define a ordem de inicialização
+
+  app:
+    build: ./app
+    volumes:
+      - ./data/empresa.db:/app/data/empresa.db:ro
+      - ./export:/app/export
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:alpine"       # Serviço de fila (Redis)
+    ports:
+      - "6379:6379"             # Mapeia a porta do Redis (opcional para debug)
